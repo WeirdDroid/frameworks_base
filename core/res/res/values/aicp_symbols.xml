@@ -167,4 +167,7 @@
   <java-symbol type="drawable" name="deadpool_clock_hand_minute" />
 
   <java-symbol type="bool" name="config_dozeAlwaysOnDisplayEnabledDefault" />
+
+  <!-- Determines whether the device supports fingerprint navigation -->
+  <java-symbol type="bool" name="config_supportsFPNavigation" />
 </resources>

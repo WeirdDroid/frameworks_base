@@ -106,4 +106,7 @@
     <integer name="config_flashlightProximityTimeout">300</integer>
 
     <bool name="config_dozeAlwaysOnDisplayEnabledDefault">false</bool>
+
+    <!-- Determines whether the device supports fingerprint navigation -->
+    <bool name="config_supportsFPNavigation">false</bool>
 </resources>
