@@ -5139,6 +5139,48 @@ public final class Settings {
         public static final String CHOOSER_ACTIVITY_BLACKLIST = "chooser_activity_blacklist";
 
         /**
+         * Controls whether fingerprint gestures are enabled.
+         * @hide
+         */
+        public static final String FINGERPRINT_GESTURES_ENABLED = "fingerprint_gestures_enabled";
+
+        /**
+         * Controls whether double tap fingerprint gesture is enabled.
+         * @hide
+         */
+        public static final String FINGERPRINT_GESTURES_DOUBLE_TAP = "fingerprint_gestures_double_tap";
+
+        /**
+         * Controls whether longpress fingerprint gesture is enabled.
+         * @hide
+         */
+        public static final String FINGERPRINT_GESTURES_LONGPRESS = "fingerprint_gestures_longpress";
+
+        /**
+         * Controls whether swipe up fingerprint gesture is enabled.
+         * @hide
+         */
+        public static final String FINGERPRINT_GESTURES_SWIPE_UP = "fingerprint_gestures_swipe_up";
+
+        /**
+         * Controls whether swipe down fingerprint gesture is enabled.
+         * @hide
+         */
+        public static final String FINGERPRINT_GESTURES_SWIPE_DOWN = "fingerprint_gestures_swipe_down";
+
+        /**
+         * Controls whether swipe left fingerprint gesture is enabled.
+         * @hide
+         */
+        public static final String FINGERPRINT_GESTURES_SWIPE_LEFT = "fingerprint_gestures_swipe_left";
+
+        /**
+         * Controls whether swipe right fingerprint gesture is enabled.
+         * @hide
+         */
+        public static final String FINGERPRINT_GESTURES_SWIPE_RIGHT = "fingerprint_gestures_swipe_right";
+
+        /**
          * --- AICP System settings end
          *  Add new system settings above this comment
          */
@@ -5206,7 +5248,15 @@ public final class Settings {
             STATUSBAR_CLOCK_AM_PM_STYLE,
             STATUSBAR_CLOCK_DATE_DISPLAY,
             STATUSBAR_CLOCK_DATE_STYLE,
-            STATUSBAR_CLOCK_DATE_FORMAT
+            STATUSBAR_CLOCK_DATE_FORMAT,
+            SHOW_BATTERY_PERCENT,
+            FINGERPRINT_GESTURES_ENABLED,
+            FINGERPRINT_GESTURES_DOUBLE_TAP,
+            FINGERPRINT_GESTURES_LONGPRESS,
+            FINGERPRINT_GESTURES_SWIPE_UP,
+            FINGERPRINT_GESTURES_SWIPE_DOWN,
+            FINGERPRINT_GESTURES_SWIPE_LEFT,
+            FINGERPRINT_GESTURES_SWIPE_RIGHT
         };
 
         /**
