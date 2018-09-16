@@ -6,4 +6,7 @@
 
   <java-symbol type="array" name="config_blockPackagesSensorDrain" />
 
+  <java-symbol type="anim" name="inv_app_in" />
+  <java-symbol type="anim" name="inv_app_out" />
+
 </resources>
