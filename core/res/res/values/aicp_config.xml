@@ -75,4 +75,7 @@
 
     <!-- Whether to allow process with media UID to access CameraServiceProxy -->
     <bool name="config_allowMediaUidForCameraServiceProxy">false</bool>
+
+    <!-- Determines whether the device supports fingerprint navigation -->
+    <bool name="config_supportsFingerprintNavigation">false</bool>
 </resources>
