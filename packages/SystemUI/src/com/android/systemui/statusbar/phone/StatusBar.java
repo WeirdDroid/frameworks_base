@@ -538,8 +538,6 @@ public class StatusBar extends SystemUI implements DemoMode, TunerService.Tunabl
 
     private final MetricsLogger mMetricsLogger = Dependency.get(MetricsLogger.class);
 
-    private boolean mNavigationBarViewAttached;
-
     private final Runnable mLongPressBrightnessChange = new Runnable() {
         @Override
         public void run() {
@@ -575,6 +573,20 @@ public class StatusBar extends SystemUI implements DemoMode, TunerService.Tunabl
     };
 
     protected final H mHandler = createHandler();
+
+    protected final ContentObserver mNavbarObserver = new ContentObserver(mHandler) {
+        @Override
+        public void onChange(boolean selfChange) {
+            boolean showing = Settings.Secure.getInt(mContext.getContentResolver(),
+                    Settings.Secure.NAVIGATION_BAR_VISIBLE,
+                    ActionUtils.hasNavbarByDefault(mContext) ? 1 : 0) != 0;
+            if (!showing && mNavigationBar != null && mNavigationBarView != null) {
+                removeNavigationBar();
+            } else if (showing && mNavigationBar == null && mNavigationBarView == null) {
+                createNavigationBar();
+            }
+        }
+    };
 
     private int mInteractingWindows;
     private boolean mAutohideSuspended;
@@ -1208,16 +1220,11 @@ public class StatusBar extends SystemUI implements DemoMode, TunerService.Tunabl
 
         // Private API call to make the shadows look better for Recents
         ThreadedRenderer.overrideProperty("ambientRatio", String.valueOf(1.5f));
-
-        // listen for NAVIGATION_BAR_ENABLED setting (per-user)
-        resetNavbarObserver();
-
         mMinBrightness = pm.getMinimumScreenBrightnessSetting();
         mMaxBrightness = pm.getMaximumScreenBrightnessSetting();
     }
 
     protected void createNavigationBar() {
-        if (mNavigationBarViewAttached) return;
         mNavigationBarView = NavigationBarFragment.create(mContext, (tag, fragment) -> {
             mNavigationBar = (NavigationBarFragment) fragment;
             if (mLightBarController != null) {
@@ -1228,7 +1235,6 @@ public class StatusBar extends SystemUI implements DemoMode, TunerService.Tunabl
             }
             mNavigationBar.setCurrentSysuiVisibility(mSystemUiVisibility);
         });
-        mNavigationBarViewAttached = true;
     }
 
     protected void removeNavigationBar() {
@@ -1237,7 +1243,6 @@ public class StatusBar extends SystemUI implements DemoMode, TunerService.Tunabl
             if (mNavigationBarView.isAttachedToWindow()) {
                 mWindowManager.removeViewImmediate(mNavigationBarView);
                 mNavigationBarView = null;
-                mNavigationBarViewAttached = false;
             }
             fragmentHost.getFragmentManager().beginTransaction().remove(mNavigationBar).commit();
             mNavigationBar = null;
@@ -3698,7 +3703,6 @@ public class StatusBar extends SystemUI implements DemoMode, TunerService.Tunabl
         setHeadsUpUser(newUserId);
         // End old BaseStatusBar.userSwitched
         if (MULTIUSER_DEBUG) mNotificationPanelDebugText.setText("USER " + newUserId);
-        resetNavbarObserver();
         animateCollapsePanels();
         updatePublicMode();
         mEntryManager.getNotificationData().filterAndSort();
@@ -3956,7 +3960,6 @@ public class StatusBar extends SystemUI implements DemoMode, TunerService.Tunabl
         if (mNavigationBarView != null) {
             mWindowManager.removeViewImmediate(mNavigationBarView);
             mNavigationBarView = null;
-            mNavigationBarViewAttached = false;
         }
         mContext.unregisterReceiver(mBroadcastReceiver);
         mContext.unregisterReceiver(mDemoReceiver);
@@ -6427,30 +6430,6 @@ public class StatusBar extends SystemUI implements DemoMode, TunerService.Tunabl
             mNavigationBar.getBarTransitions().setAutoDim(true);
         }
     };
-
-    protected boolean mUseNavBar = false;
-
-    protected final ContentObserver mNavbarObserver = new ContentObserver(mHandler) {
-        @Override
-        public void onChange(boolean selfChange) {
-            boolean showing = Settings.Secure.getInt(mContext.getContentResolver(),
-                    Settings.Secure.NAVIGATION_BAR_VISIBLE,
-                    ActionUtils.hasNavbarByDefault(mContext) ? 1 : 0) != 0;
-            if (!showing && mNavigationBar != null && mNavigationBarView != null) {
-                removeNavigationBar();
-            } else if (showing && mNavigationBar == null && mNavigationBarView == null) {
-                createNavigationBar();
-            }
-        }
-    };
-
-    private void resetNavbarObserver() {
-        mContext.getContentResolver().unregisterContentObserver(mNavbarObserver);
-        mNavbarObserver.onChange(false);
-        mContext.getContentResolver().registerContentObserver(
-                Settings.Secure.getUriFor(Settings.Secure.NAVIGATION_BAR_VISIBLE), true,
-                mNavbarObserver, UserHandle.USER_CURRENT);
-    }
 
     public NotificationGutsManager getGutsManager() {
         return mGutsManager;
