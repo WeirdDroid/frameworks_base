@@ -77,6 +77,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.UserInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.database.ContentObserver;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.PointF;
@@ -572,6 +573,20 @@ public class StatusBar extends SystemUI implements DemoMode, TunerService.Tunabl
     };
 
     protected final H mHandler = createHandler();
+
+    protected final ContentObserver mNavbarObserver = new ContentObserver(mHandler) {
+        @Override
+        public void onChange(boolean selfChange) {
+            boolean showing = Settings.Secure.getInt(mContext.getContentResolver(),
+                    Settings.Secure.NAVIGATION_BAR_VISIBLE,
+                    ActionUtils.hasNavbarByDefault(mContext) ? 1 : 0) != 0;
+            if (!showing && mNavigationBar != null && mNavigationBarView != null) {
+                removeNavigationBar();
+            } else if (showing && mNavigationBar == null && mNavigationBarView == null) {
+                createNavigationBar();
+            }
+        }
+    };
 
     private int mInteractingWindows;
     private boolean mAutohideSuspended;

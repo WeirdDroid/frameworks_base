@@ -2789,6 +2789,15 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     UserHandle.USER_CURRENT) != 0;
         }
 
+        boolean doShowNavbar = Settings.Secure.getIntForUser(resolver,
+                Settings.Secure.NAVIGATION_BAR_VISIBLE,
+                ActionUtils.hasNavbarByDefault(mContext) ? 1 : 0,
+                UserHandle.USER_CURRENT) == 1;
+        if (doShowNavbar != mNavbarVisible) {
+            mNavbarVisible = doShowNavbar;
+        }
+        updateNavigationBarSize();
+
         synchronized (mWindowManagerFuncs.getWindowManagerLock()) {
             PolicyControl.reloadFromSetting(mContext);
         }
@@ -3267,7 +3276,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             int displayId, DisplayCutout displayCutout) {
         int width = fullWidth;
         // TODO(multi-display): Support navigation bar on secondary displays.
-        if (displayId == DEFAULT_DISPLAY && mHasNavigationBar) {
+        if (displayId == DEFAULT_DISPLAY && hasNavigationBar()) {
             // For a basic navigation bar, when we are in landscape mode we place
             // the navigation bar to the side.
             if (mNavigationBarCanMove && fullWidth > fullHeight) {
@@ -3293,7 +3302,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             int displayId, DisplayCutout displayCutout) {
         int height = fullHeight;
         // TODO(multi-display): Support navigation bar on secondary displays.
-        if (displayId == DEFAULT_DISPLAY && mHasNavigationBar) {
+        if (displayId == DEFAULT_DISPLAY && hasNavigationBar()) {
             // For a basic navigation bar, when we are in portrait mode we place
             // the navigation bar to the bottom.
             if (!mNavigationBarCanMove || fullWidth < fullHeight) {
@@ -5475,7 +5484,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         Rect osf = null;
         dcf.setEmpty();
 
-        final boolean hasNavBar = (isDefaultDisplay && mHasNavigationBar
+        final boolean hasNavBar = (isDefaultDisplay && hasNavigationBar()
                 && mNavigationBar != null && mNavigationBar.isVisibleLw());
 
         final int adjust = sim & SOFT_INPUT_MASK_ADJUST;
@@ -8972,7 +8981,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     // overridden by qemu.hw.mainkeys in the emulator.
     @Override
     public boolean hasNavigationBar() {
-        return mHasNavigationBar;
+        return mNavbarVisible;
     }
 
     @Override
@@ -9550,6 +9559,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         return mUseGestureButton;
     }
 
+
+    @Override
     public void sendCustomAction(Intent intent) {
         String action = intent.getAction();
         if (action != null) {
