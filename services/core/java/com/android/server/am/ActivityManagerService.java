@@ -5914,7 +5914,6 @@ public class ActivityManagerService extends IActivityManager.Stub
     private final void handleAppDiedLocked(ProcessRecord app,
             boolean restarting, boolean allowRestart) {
         int pid = app.pid;
-        final boolean clearLaunchStartTime = !restarting && app.removed && app.foregroundActivities;
         boolean kept = cleanUpApplicationRecordLocked(app, restarting, allowRestart, -1,
                 false /*replacingPid*/);
         if (!kept && !restarting) {
@@ -5955,6 +5954,7 @@ public class ActivityManagerService extends IActivityManager.Stub
         } finally {
             mWindowManager.continueSurfaceLayout();
         }
+
     }
 
     private final int getLRURecordIndexForAppLocked(IApplicationThread thread) {
